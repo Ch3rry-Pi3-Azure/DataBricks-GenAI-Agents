@@ -1,0 +1,2 @@
+resource_group_name  = "rg-dbgenai-dev"
+workspace_base_path  = "/Shared/genai-agents"

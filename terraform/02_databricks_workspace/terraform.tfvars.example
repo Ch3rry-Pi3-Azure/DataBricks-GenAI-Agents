@@ -1,0 +1,5 @@
+resource_group_name        = "rg-dbgenai-dev"
+location                   = "eastus2"
+workspace_name_prefix      = "adb-genai"
+sku                        = "premium"
+managed_resource_group_name = null

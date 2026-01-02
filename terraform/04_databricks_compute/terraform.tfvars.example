@@ -1,0 +1,6 @@
+resource_group_name = "rg-dbgenai-dev"
+cluster_name        = "GenAI Agents Cluster"
+use_ml_runtime      = true
+spark_version       = "16.4.x-scala2.13"
+node_type_id        = "Standard_D2ads_v6"
+data_security_mode  = "SINGLE_USER"

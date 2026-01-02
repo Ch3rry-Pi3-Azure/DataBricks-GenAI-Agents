@@ -1,0 +1,4 @@
+account_id           = "00000000-0000-0000-0000-000000000000"
+metastore_id         = "metastore_azure_eastus2"
+workspace_id         = 1234567890123456
+default_catalog_name = "main"

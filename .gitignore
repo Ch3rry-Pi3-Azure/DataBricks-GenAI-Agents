@@ -1,0 +1,9 @@
+.env
+.env.*
+!.env.example
+*.tfvars
+*.tfvars.json
+.venv
+.terraform/
+*.tfstate
+*.tfstate.*

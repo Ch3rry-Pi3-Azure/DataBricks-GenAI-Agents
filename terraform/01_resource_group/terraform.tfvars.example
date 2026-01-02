@@ -1,0 +1,3 @@
+resource_group_name       = "rg-dbgenai-agents-dev"
+resource_group_name_prefix = "rg-dbgenai"
+location                  = "eastus2"
