@@ -42,6 +42,7 @@ az account show
 - terraform/04_databricks_compute: Databricks cluster + preinstalled libraries
 - terraform/05_notebooks: Databricks workspace notebooks
 - terraform/06_job: Databricks job to run the driver notebook on the cluster
+- terraform/07_model_serving_endpoint: Model serving endpoint (UC model)
 - scripts/: Helper scripts to deploy/destroy Terraform resources
 - notebooks/: Driver notebook
 
@@ -65,11 +66,14 @@ python scripts\deploy.py --metastore-only
 python scripts\deploy.py --compute-only
 python scripts\deploy.py --notebooks-only
 python scripts\deploy.py --job-only
+python scripts\deploy.py --serving-only
 ```
 
 ## Run the Notebook
 1) Open `/Shared/genai-agents/driver.ipynb` to test, evaluate, register, and deploy the agent.
 2) Or run the `GenAI Agents Driver Job` workflow to execute on the cluster.
+3) After registering the model, run `python scripts/deploy.py --serving-only` to create the serving endpoint.
+4) If you need custom concurrency settings, adjust them in the Serving UI after the endpoint is created.
 
 ## Destroy Resources
 To tear down resources:
@@ -87,6 +91,7 @@ python scripts\destroy.py --metastore-only
 python scripts\destroy.py --compute-only
 python scripts\destroy.py --notebooks-only
 python scripts\destroy.py --job-only
+python scripts\destroy.py --serving-only
 ```
 
 ## Notes

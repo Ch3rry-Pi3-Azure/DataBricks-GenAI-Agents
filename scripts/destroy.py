@@ -123,6 +123,7 @@ if __name__ == "__main__":
         group.add_argument("--compute-only", action="store_true", help="Destroy only the Databricks compute stack")
         group.add_argument("--notebooks-only", action="store_true", help="Destroy only the notebooks stack")
         group.add_argument("--job-only", action="store_true", help="Destroy only the Databricks job stack")
+        group.add_argument("--serving-only", action="store_true", help="Destroy only the model serving endpoint stack")
         args = parser.parse_args()
 
         repo_root = Path(__file__).resolve().parent.parent
@@ -132,6 +133,7 @@ if __name__ == "__main__":
         compute_dir = repo_root / "terraform" / "04_databricks_compute"
         notebooks_dir = repo_root / "terraform" / "05_notebooks"
         job_dir = repo_root / "terraform" / "06_job"
+        serving_dir = repo_root / "terraform" / "07_model_serving_endpoint"
 
         try:
             workspace_url = get_output(databricks_dir, "databricks_workspace_url")
@@ -150,8 +152,11 @@ if __name__ == "__main__":
             tf_dirs = [notebooks_dir]
         elif args.job_only:
             tf_dirs = [job_dir]
+        elif args.serving_only:
+            tf_dirs = [serving_dir]
         else:
             tf_dirs = [
+                serving_dir,
                 job_dir,
                 notebooks_dir,
                 compute_dir,

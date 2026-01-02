@@ -22,6 +22,15 @@ DEFAULTS = {
     "workspace_base_path": "/Shared/genai-agents",
     "notebook_name": "driver",
     "job_name": "GenAI Agents Driver Job",
+    "serving_catalog_name": None,
+    "serving_schema_name": "default",
+    "serving_model_name": "genai-agent",
+    "serving_model_version": "1",
+    "serving_endpoint_name": "genai-agent-endpoint",
+    "serving_served_model_name": "genai-agent",
+    "serving_workload_type": "CPU",
+    "serving_workload_size": "Small",
+    "serving_scale_to_zero_enabled": True,
 }
 
 ENV_KEYS = [
@@ -247,6 +256,22 @@ def write_job_tfvars(job_dir, rg_name):
     write_tfvars(job_dir / "terraform.tfvars", items)
 
 
+def write_serving_tfvars(serving_dir, rg_name):
+    items = [
+        ("resource_group_name", rg_name),
+        ("catalog_name", DEFAULTS["serving_catalog_name"]),
+        ("schema_name", DEFAULTS["serving_schema_name"]),
+        ("model_name", DEFAULTS["serving_model_name"]),
+        ("model_version", DEFAULTS["serving_model_version"]),
+        ("endpoint_name", DEFAULTS["serving_endpoint_name"]),
+        ("served_model_name", DEFAULTS["serving_served_model_name"]),
+        ("workload_type", DEFAULTS["serving_workload_type"]),
+        ("workload_size", DEFAULTS["serving_workload_size"]),
+        ("scale_to_zero_enabled", DEFAULTS["serving_scale_to_zero_enabled"]),
+    ]
+    write_tfvars(serving_dir / "terraform.tfvars", items)
+
+
 if __name__ == "__main__":
     try:
         parser = argparse.ArgumentParser(description="Deploy Terraform stacks for Databricks GenAI Agents.")
@@ -257,6 +282,7 @@ if __name__ == "__main__":
         group.add_argument("--compute-only", action="store_true", help="Deploy only the Databricks compute stack")
         group.add_argument("--notebooks-only", action="store_true", help="Deploy only the notebooks stack")
         group.add_argument("--job-only", action="store_true", help="Deploy only the Databricks job stack")
+        group.add_argument("--serving-only", action="store_true", help="Deploy only the model serving endpoint stack")
         args = parser.parse_args()
 
         repo_root = Path(__file__).resolve().parent.parent
@@ -266,6 +292,7 @@ if __name__ == "__main__":
         compute_dir = repo_root / "terraform" / "04_databricks_compute"
         notebooks_dir = repo_root / "terraform" / "05_notebooks"
         job_dir = repo_root / "terraform" / "06_job"
+        serving_dir = repo_root / "terraform" / "07_model_serving_endpoint"
 
         if args.rg_only:
             write_rg_tfvars(rg_dir)
@@ -317,6 +344,14 @@ if __name__ == "__main__":
             write_job_tfvars(job_dir, rg_name)
             run(["terraform", f"-chdir={job_dir}", "init"])
             run(["terraform", f"-chdir={job_dir}", "apply", "-auto-approve"])
+            sys.exit(0)
+
+        if args.serving_only:
+            run(["terraform", f"-chdir={rg_dir}", "init"])
+            rg_name = get_output(rg_dir, "resource_group_name")
+            write_serving_tfvars(serving_dir, rg_name)
+            run(["terraform", f"-chdir={serving_dir}", "init"])
+            run(["terraform", f"-chdir={serving_dir}", "apply", "-auto-approve"])
             sys.exit(0)
 
         write_rg_tfvars(rg_dir)
