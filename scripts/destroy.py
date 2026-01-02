@@ -44,6 +44,31 @@ def get_output(tf_dir, output_name):
     return run_capture(["terraform", f"-chdir={tf_dir}", "output", "-raw", output_name])
 
 
+def hcl_value(value):
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, (int, float)):
+        return str(value)
+    escaped = str(value).replace('"', '\\"')
+    return f'"{escaped}"'
+
+
+def write_tfvars(path, items):
+    lines = [f"{key} = {hcl_value(value)}" for key, value in items]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def ensure_rg_tfvars(tf_dir, rg_name):
+    tfvars_path = tf_dir / "terraform.tfvars"
+    if tfvars_path.exists():
+        return
+    if rg_name is None:
+        return
+    write_tfvars(tfvars_path, [("resource_group_name", rg_name)])
+
+
 def get_databricks_aad_token():
     if AZ_BIN is None:
         raise FileNotFoundError("Azure CLI not found. Install Azure CLI or ensure az is on PATH.")
@@ -140,6 +165,11 @@ if __name__ == "__main__":
         except subprocess.CalledProcessError:
             workspace_url = None
 
+        try:
+            rg_name = get_output(rg_dir, "resource_group_name")
+        except subprocess.CalledProcessError:
+            rg_name = None
+
         if args.rg_only:
             tf_dirs = [rg_dir]
         elif args.databricks_only:
@@ -167,6 +197,11 @@ if __name__ == "__main__":
 
         if workspace_url and (args.notebooks_only or notebooks_dir in tf_dirs):
             cleanup_workspace_files(workspace_url)
+
+        if rg_name is not None:
+            ensure_rg_tfvars(notebooks_dir, rg_name)
+            ensure_rg_tfvars(job_dir, rg_name)
+            ensure_rg_tfvars(serving_dir, rg_name)
 
         for tf_dir in tf_dirs:
             if not tf_dir.exists():
