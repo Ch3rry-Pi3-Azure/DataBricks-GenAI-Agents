@@ -24,16 +24,16 @@ python scripts\deploy.py
 5) Run the cells to test, evaluate, register, and deploy the agent.
 
 ## Project Structure
-- terraform/01_resource_group: Azure resource group
-- terraform/02_databricks_workspace: Azure Databricks workspace
-- terraform/03_uc_metastore_assignment: Unity Catalog metastore assignment
-- terraform/04_databricks_compute: Databricks cluster + preinstalled libraries
-- terraform/05_notebooks: Databricks workspace notebooks
-- terraform/06_job: Databricks job to run the driver notebook on the cluster
-- terraform/07_model_serving_endpoint: Model serving endpoint (UC model)
-- scripts/: Deploy/destroy helpers (auto-writes terraform.tfvars)
-- guides/setup.md: Detailed setup guide
-- notebooks/: Databricks notebook(s)
+- `terraform/01_resource_group`: Azure resource group
+- `terraform/02_databricks_workspace`: Azure Databricks workspace
+- `terraform/03_uc_metastore_assignment`: Unity Catalog metastore assignment
+- `terraform/04_databricks_compute`: Databricks cluster + preinstalled libraries
+- `terraform/05_notebooks`: Databricks workspace notebooks
+- `terraform/06_job`: Databricks job to run the driver notebook on the cluster
+- `terraform/07_model_serving_endpoint`: Model serving endpoint (UC model)
+- `scripts/`: Deploy/destroy helpers (auto-writes terraform.tfvars)
+- `guides/setup.md`: Detailed setup guide
+- `notebooks/`: Databricks notebook(s)
 
 ## Deploy/Destroy Options
 Deploy specific stacks:
